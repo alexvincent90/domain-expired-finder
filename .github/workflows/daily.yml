@@ -1,0 +1,27 @@
+name: Send Domain Drop Daily
+
+on:
+  schedule:
+    - cron: '30 15 * * *'   # 8:30 AM US Pacific daily
+  workflow_dispatch:
+
+jobs:
+  send-digest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      - run: pip install -r requirements.txt
+      - name: Run domain finder
+        env:
+          ANTHROPIC_API_KEY:     ${{ secrets.ANTHROPIC_API_KEY }}
+          RESEND_API_KEY:        ${{ secrets.RESEND_API_KEY }}
+          FROM_EMAIL:            "domains@naviwork.tools"
+          FROM_NAME:             "Domain Drop Daily"
+          GODADDY_AFFILIATE_ID:  ${{ secrets.GODADDY_AFFILIATE_ID }}
+          TOP_N:                 "10"
+        run: python main.py
