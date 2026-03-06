@@ -1,5 +1,5 @@
 """
-Domain Expired Auction Finder — main.py
+Domain Expired Auction Finder â main.py
 Fetches expiring/auction domains from GoDaddy Auctions RSS,
 scores them with a heuristic algorithm + Claude, emails a curated daily list.
 
@@ -30,7 +30,7 @@ TOP_N               = int(os.environ.get("TOP_N", "10"))
 AFFILIATE_ID        = os.environ.get("GODADDY_AFFILIATE_ID", "")  # your GoDaddy affiliate ID
 
 
-# ── 1. Fetch domains from GoDaddy Auctions RSS ────────────────────────────────
+# ââ 1. Fetch domains from GoDaddy Auctions RSS ââââââââââââââââââââââââââââââââ
 def fetch_expiring_domains(n: int = 50) -> list[dict]:
     """
     GoDaddy Auctions publishes a public RSS feed of upcoming closeout domains.
@@ -85,7 +85,7 @@ def fetch_expiring_domains(n: int = 50) -> list[dict]:
     return domains
 
 
-# ── 2. Score domains heuristically ───────────────────────────────────────────
+# ââ 2. Score domains heuristically âââââââââââââââââââââââââââââââââââââââââââ
 PREMIUM_EXTENSIONS = {"com": 30, "io": 22, "ai": 22, "co": 15, "app": 15, "dev": 12, "net": 10}
 
 def score_domain(domain: str) -> dict:
@@ -105,8 +105,8 @@ def score_domain(domain: str) -> dict:
     # Extension
     ext_score = PREMIUM_EXTENSIONS.get(ext, 3)
     score += ext_score
-    if ext_score >= 22:   flags.append(f".{ext} 🔥 premium")
-    elif ext_score >= 10: flags.append(f".{ext} ✓ solid")
+    if ext_score >= 22:   flags.append(f".{ext} ð¥ premium")
+    elif ext_score >= 10: flags.append(f".{ext} â solid")
     else:                 flags.append(f".{ext} weak")
 
     # Length: 4-7 chars is brandable sweet spot
@@ -148,11 +148,11 @@ def score_domain(domain: str) -> dict:
     return {"score": min(score, 100), "flags": flags, "grade": grade}
 
 
-# ── 3. Filter + Claude enrichment ─────────────────────────────────────────────
+# ââ 3. Filter + Claude enrichment âââââââââââââââââââââââââââââââââââââââââââââ
 def enrich_with_claude(domains: list[dict]) -> list[dict]:
     """
     Send the top domains to Claude for a use-case suggestion.
-    Claude doesn't filter — it adds a 1-line 'best use for' note.
+    Claude doesn't filter â it adds a 1-line 'best use for' note.
     """
     client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
     prompt_lines = "\n".join(
@@ -185,7 +185,7 @@ def enrich_with_claude(domains: list[dict]) -> list[dict]:
     return domains
 
 
-# ── 4. Build email ────────────────────────────────────────────────────────────
+# ââ 4. Build email ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 GRADE_COLORS = {"A": "#22c55e", "B": "#3b82f6", "C": "#f59e0b", "D": "#9ca3af"}
 
 def affiliate_link(original_link: str, affiliate_id: str) -> str:
@@ -194,7 +194,7 @@ def affiliate_link(original_link: str, affiliate_id: str) -> str:
     return f"https://www.godaddy.com/domainfinder/find?checkAvail=1&domainToCheck={{}}&isc={affiliate_id}"
 
 def build_email(domains: list[dict], date_str: str) -> tuple[str, str]:
-    subject = f"🔍 Domain Drop Daily — {date_str}: {len(domains)} picks under ${max(d['bid'] for d in domains) + 20}"
+    subject = f"ð Domain Drop Daily â {date_str}: {len(domains)} picks under ${max(d['bid'] for d in domains) + 20}"
 
     items_html = ""
     for i, d in enumerate(domains, 1):
@@ -206,12 +206,12 @@ def build_email(domains: list[dict], date_str: str) -> tuple[str, str]:
         <div style="margin-bottom:20px;padding-bottom:18px;border-bottom:1px solid #f4f4f4">
           <div style="display:flex;align-items:center;margin-bottom:5px;gap:8px">
             <span style="background:{grade_color};color:white;border-radius:4px;padding:2px 7px;font-size:11px;font-weight:700">Grade {d['grade']}</span>
-            <span style="font-size:11px;color:#aaa">score {d['score']}/100 &nbsp;·&nbsp; current bid: {bid_str}</span>
+            <span style="font-size:11px;color:#aaa">score {d['score']}/100 &nbsp;Â·&nbsp; current bid: {bid_str}</span>
           </div>
           <div style="font-size:18px;font-weight:800;font-family:monospace;color:#1a1a1a;margin-bottom:4px">{d['domain']}</div>
-          <div style="font-size:13px;color:#555;margin-bottom:6px">💡 Best for: <em>{d.get('use_case', '')}</em></div>
-          <div style="font-size:11px;color:#aaa;margin-bottom:7px">{' &nbsp;·&nbsp; '.join(d.get('flags', []))}</div>
-          <a href="{buy_link}" style="font-size:12px;color:#0066cc;font-weight:700;text-decoration:none">Bid on GoDaddy →</a>
+          <div style="font-size:13px;color:#555;margin-bottom:6px">ð¡ Best for: <em>{d.get('use_case', '')}</em></div>
+          <div style="font-size:11px;color:#aaa;margin-bottom:7px">{' &nbsp;Â·&nbsp; '.join(d.get('flags', []))}</div>
+          <a href="{buy_link}" style="font-size:12px;color:#0066cc;font-weight:700;text-decoration:none">Bid on GoDaddy â</a>
         </div>"""
 
     html = f"""<!DOCTYPE html>
@@ -221,8 +221,8 @@ def build_email(domains: list[dict], date_str: str) -> tuple[str, str]:
   <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:30px">
     <tr>
       <td>
-        <span style="font-size:22px;font-weight:800">🔍 Domain Drop Daily</span>
-        <div style="font-size:13px;color:#888;margin-top:3px">{date_str} &nbsp;·&nbsp; Curated expiring domains, scored &amp; graded</div>
+        <span style="font-size:22px;font-weight:800">ð Domain Drop Daily</span>
+        <div style="font-size:13px;color:#888;margin-top:3px">{date_str} &nbsp;Â·&nbsp; Curated expiring domains, scored &amp; graded</div>
       </td>
     </tr>
   </table>
@@ -234,7 +234,7 @@ def build_email(domains: list[dict], date_str: str) -> tuple[str, str]:
   <hr style="border:none;border-top:1px solid #eee;margin:30px 0">
   <p style="font-size:11px;color:#bbb;text-align:center;line-height:1.6">
     You're subscribed to Domain Drop Daily.<br>
-    Affiliate links may be present — I earn a commission if you buy, at no extra cost to you.<br>
+    Affiliate links may be present â I earn a commission if you buy, at no extra cost to you.<br>
     <a href="{{{{unsubscribe_url}}}}" style="color:#bbb">Unsubscribe</a>
   </p>
 </body>
@@ -242,7 +242,7 @@ def build_email(domains: list[dict], date_str: str) -> tuple[str, str]:
     return subject, html
 
 
-# ── 5 & 6. Subscribers + Send ─────────────────────────────────────────────────
+# ââ 5 & 6. Subscribers + Send âââââââââââââââââââââââââââââââââââââââââââââââââ
 def get_audience_id() -> str:
     r = requests.get(
         "https://api.resend.com/audiences",
@@ -266,19 +266,22 @@ def send_digest(subject: str, html: str, subscribers: list[str]) -> None:
     resend.api_key = RESEND_API_KEY
     if not subscribers:
         subscribers = [FROM_EMAIL]
-    for i in range(0, len(subscribers), 100):
-        batch = subscribers[i:i + 100]
+    # Send individually to respect Resend's 2 req/sec rate limit
+    import time
+    for i, email in enumerate(subscribers):
         params = resend.Emails.SendParams(
             from_=f"{FROM_NAME} <{FROM_EMAIL}>",
-            to=batch,
+            to=[email],
             subject=subject,
             html=html,
         )
-        resend.Emails.send(params)
-        log.info("Sent batch %d (%d recipients)", i // 100 + 1, len(batch))
+        result = resend.Emails.send(params)
+        log.info("Sent to %s — id=%s", email, result.get("id"))
+        if i < len(subscribers) - 1:
+            time.sleep(0.6)
 
 
-# ── Entrypoint ─────────────────────────────────────────────────────────────────
+# ââ Entrypoint âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 def main():
     date_str = datetime.now(timezone.utc).strftime("%B %-d, %Y")
     log.info("Starting Domain Drop Daily for %s", date_str)
@@ -296,7 +299,7 @@ def main():
         good_domains.sort(key=lambda x: (-x["score"], -x["bid_count"]))
 
         if not good_domains:
-            log.warning("No high-grade domains today — falling back to top C grades")
+            log.warning("No high-grade domains today â falling back to top C grades")
             good_domains = sorted(raw_domains, key=lambda x: -x["score"])
 
         top_domains = good_domains[:TOP_N]
@@ -306,7 +309,7 @@ def main():
         subject, html = build_email(top_domains, date_str)
         subscribers = get_subscribers()
         send_digest(subject, html, subscribers)
-        log.info("Done ✓")
+        log.info("Done â")
     except Exception as e:
         log.exception("Fatal: %s", e)
         raise
