@@ -295,11 +295,11 @@ def main():
         except Exception as _fetch_err:
             log.warning("GoDaddy fetch failed (%s) — using placeholder domains", _fetch_err)
             raw_domains = [
-                {"name": "buildfast.io", "tld": ".io", "length": 9, "age_years": 5, "score": 88, "grade": "A", "price": 1200, "auction_url": "https://auctions.godaddy.com"},
-                {"name": "launchpad.co", "tld": ".co", "length": 9, "age_years": 8, "score": 82, "grade": "A", "price": 950, "auction_url": "https://auctions.godaddy.com"},
-                {"name": "stacknotes.com", "tld": ".com", "length": 10, "age_years": 3, "score": 76, "grade": "B", "price": 499, "auction_url": "https://auctions.godaddy.com"},
-                {"name": "devdrop.net", "tld": ".net", "length": 7, "age_years": 6, "score": 71, "grade": "B", "price": 299, "auction_url": "https://auctions.godaddy.com"},
-                {"name": "sidelaunch.com", "tld": ".com", "length": 10, "age_years": 4, "score": 68, "grade": "B", "price": 399, "auction_url": "https://auctions.godaddy.com"},
+                {"domain": "buildfast.io",   "bid": 1200, "bid_count": 7, "link": "https://auctions.godaddy.com", "desc": "Placeholder"},
+                {"domain": "launchpad.co",   "bid": 950,  "bid_count": 4, "link": "https://auctions.godaddy.com", "desc": "Placeholder"},
+                {"domain": "stacknotes.com", "bid": 499,  "bid_count": 2, "link": "https://auctions.godaddy.com", "desc": "Placeholder"},
+                {"domain": "devdrop.net",    "bid": 299,  "bid_count": 1, "link": "https://auctions.godaddy.com", "desc": "Placeholder"},
+                {"domain": "sidelaunch.com", "bid": 399,  "bid_count": 3, "link": "https://auctions.godaddy.com", "desc": "Placeholder"},
             ]
 
         # Score all domains
